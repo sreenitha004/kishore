@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>For My Cuteey | 🧿</title>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@500;700&family=Quicksand:wght@300;400;500&family=Lora:ital@1&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+    <style>
+        :root {
+            --bg-cream: #fcfaf2;
+            --nazar-blue: #002395;
+            --nazar-light: #89cff0;
+            --soft-charcoal: #1a1a1a;
+            --white: #ffffff;
+            --heart-red: #ff4d6d;
+        }
+
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        
+        body, html {
+            margin: 0; padding: 0;
+            background-color: var(--bg-cream);
+            color: var(--soft-charcoal);
+            font-family: 'Quicksand', sans-serif;
+            overflow-x: hidden; width: 100%;
+        }
+
+        /* --- FLOATING HEART DOODLES --- */
+        .doodle-container {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: 0;
+        }
+        .heart-doodle {
+            position: absolute; width: 18px; height: 18px;
+            background-color: var(--nazar-blue);
+            transform: rotate(-45deg); opacity: 0.12;
+            animation: dance 8s infinite ease-in-out;
+        }
+        .heart-doodle::before, .heart-doodle::after {
+            content: ""; width: 18px; height: 18px;
+            background-color: inherit; border-radius: 50%; position: absolute;
+        }
+        .heart-doodle::before { top: -9px; left: 0; }
+        .heart-doodle::after { left: 9px; top: 0; }
+        @keyframes dance {
+            0%, 100% { transform: rotate(-45deg) translate(0, 0) scale(1); }
+            50% { transform: rotate(-25deg) translate(25px, -35px) scale(1.1); }
+        }
+
+        .section {
+            min-height: 100dvh; width: 100%;
+            display: flex; flex-direction: column;
+            justify-content: center; align-items: center;
+            position: relative; text-align: center; z-index: 1;
+            padding: 40px 20px;
+        }
+        .hidden { display: none !important; }
+
+        /* --- INTRO --- */
+        .intro-text {
+            font-family: 'Dancing Script', cursive;
+            font-size: clamp(1.8rem, 8vw, 3.5rem);
+            color: var(--nazar-blue);
+            max-width: 800px; line-height: 1.4; margin-bottom: 20px;
+        }
+        .signature { font-family: 'Lora', serif; font-size: 1rem; letter-spacing: 4px; opacity: 0.6; text-transform: uppercase; }
+
+        .btn-minimal {
+            background: none; border: 1.5px solid var(--nazar-blue);
+            color: var(--nazar-blue); padding: 12px 40px;
+            font-size: 0.8rem; letter-spacing: 3px; text-transform: uppercase;
+            cursor: pointer; transition: 0.4s; margin-top: 30px;
+        }
+        .btn-minimal:hover { background: var(--nazar-blue); color: white; }
+
+        /* --- CAKE --- */
+        .cake-container { position: relative; cursor: pointer; transform: scale(1.1); margin-top: 50px; }
+        .cake { width: clamp(220px, 50vw, 280px); display: flex; flex-direction: column; align-items: center; }
+        .layer { border-radius: 12px 12px 2px 2px; position: relative; border: 1px solid rgba(0,0,0,0.03); }
+        .l3 { width: 100%; height: 85px; background: var(--nazar-blue); }
+        .l2 { width: 80%; height: 65px; background: var(--nazar-light); margin-bottom: -2px; }
+        .l1 { width: 60%; height: 50px; background: var(--white); margin-bottom: -2px; }
+        .candle { width: 10px; height: 45px; background: white; border: 1px solid var(--nazar-blue); position: absolute; top: -45px; left: 50%; transform: translateX(-50%); }
+        .flame {
+            width: 14px; height: 24px; background: #ff9800; border-radius: 50%;
+            position: absolute; top: -26px; left: -2px;
+            animation: flicker 0.8s infinite alternate; box-shadow: 0 0 15px orange;
+        }
+        @keyframes flicker { from { transform: scale(1); } to { transform: scale(1.2); } }
+
+        /* --- TRANSITION --- */
+        #blackout {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #000; z-index: 9999; display: flex; justify-content: center; align-items: center;
+            opacity: 0; visibility: hidden; transition: 1s ease-in-out;
+        }
+        #blackout.active { opacity: 1; visibility: visible; }
+        .tiny-heart {
+            width: 15px; height: 15px; background: var(--heart-red);
+            position: relative; transform: rotate(-45deg); cursor: pointer;
+            animation: heartbeat 1.5s infinite;
+        }
+        .tiny-heart::before, .tiny-heart::after {
+            content: ""; width: 15px; height: 15px; background: var(--heart-red); border-radius: 50%; position: absolute;
+        }
+        .tiny-heart::before { top: -7.5px; left: 0; }
+        .tiny-heart::after { left: 7.5px; top: 0; }
+        @keyframes heartbeat { 0%, 100% { transform: rotate(-45deg) scale(1); } 50% { transform: rotate(-45deg) scale(1.5); } }
+
+        /* --- PHOTO GRID --- */
+        .memory-container {
+            display: grid; grid-template-columns: repeat(10, 1fr); grid-template-rows: repeat(10, 1fr);
+            gap: 6px; width: min(94vw, 85vh); max-width: 750px;
+            aspect-ratio: 1/1; margin: 20px auto;
+        }
+        .memory-card { background: white; border-radius: 2px; overflow: hidden; opacity: 0; transform: translateY(20px); transition: 0.8s; }
+        .memory-card.reveal { opacity: 1; transform: translateY(0); }
+        .memory-card img { width: 100%; height: 100%; object-fit: cover; }
+        .m1 { grid-area: 2/2/3/3; } .m2 { grid-area: 1/3/3/5; } .m3 { grid-area: 3/3/4/5; }
+        .m4 { grid-area: 1/6/3/8; } .m5 { grid-area: 2/8/3/9; } .m6 { grid-area: 3/6/4/8; }
+        .m7 { grid-area: 3/1/5/3; } .m8 { grid-area: 5/2/6/3; } .m9 { grid-area: 5/3/7/5; }
+        .m10 { grid-area: 7/3/8/4; } .m11 { grid-area: 3/8/5/10; } .m12 { grid-area: 5/8/6/9; }
+        .m13 { grid-area: 5/6/7/8; } .m14 { grid-area: 7/7/8/8; }
+        .m15 { grid-area: 4/4/8/7; } .m16 { grid-area: 8/4/9/5; } .m17 { grid-area: 8/5/10/6; } .m18 { grid-area: 8/6/9/7; }
+
+        /* --- 100 REASONS SECTION --- */
+        .reasons-card {
+            background: white; padding: clamp(20px, 5vw, 50px); border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.03); max-width: 800px; width: 95%;
+            text-align: left; margin: 20px auto;
+        }
+        .reasons-header {
+            font-family: 'Dancing Script', cursive;
+            font-size: clamp(1.8rem, 6vw, 2.8rem);
+            color: var(--nazar-blue); border-bottom: 1.5px solid var(--nazar-light);
+            padding-bottom: 15px; margin-bottom: 20px; text-align: center;
+        }
+        .reasons-grid {
+            display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px 20px;
+            font-size: 0.85rem; line-height: 1.4; color: #444; 
+            max-height: 60vh; overflow-y: auto; padding-right: 10px;
+        }
+        /* Custom scrollbar for aesthetic */
+        .reasons-grid::-webkit-scrollbar { width: 5px; }
+        .reasons-grid::-webkit-scrollbar-thumb { background: var(--nazar-light); border-radius: 10px; }
+
+        @media (max-width: 600px) { .reasons-grid { grid-template-columns: 1fr; } }
+        .reason-item { padding: 5px 0; border-bottom: 1px dashed #eee; }
+        .reason-item span { color: var(--nazar-blue); font-weight: bold; margin-right: 5px; }
+
+        /* --- QUESTION BOXES --- */
+        .question-box { background: white; padding: clamp(30px, 10vw, 60px); border-radius: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.02); max-width: 550px; width: 90%; }
+        .btn-group { display: flex; gap: 15px; margin-top: 30px; justify-content: center; }
+        .btn-yes {
+            background: var(--nazar-blue); color: white; border: none; padding: 12px 30px;
+            border-radius: 50px; font-weight: bold; cursor: pointer; transition: 0.3s;
+            font-size: 0.9rem;
+        }
+        .btn-yes:hover { transform: scale(1.05); background: var(--nazar-light); color: var(--nazar-blue); }
+
+        /* --- PASSWORD --- */
+        .pass-container { background: white; padding: 50px; border-radius: 10px; width: 320px; }
+        .pass-input {
+            border: none; border-bottom: 1px solid var(--nazar-blue); background: transparent;
+            width: 100%; padding: 10px; text-align: center; font-size: 1.5rem; outline: none;
+            font-family: 'Dancing Script'; color: var(--nazar-blue);
+        }
+
+        /* --- LETTER --- */
+        .letter-card { background: white; padding: clamp(30px, 8vw, 60px); max-width: 500px; text-align: left; line-height: 1.7; border-top: 5px solid var(--nazar-blue); }
+    </style>
+</head>
+<body>
+
+    <div class="doodle-container" id="doodleContainer"></div>
+
+    <!-- PAGE 1: INTRO -->
+    <section id="entry" class="section">
+        <div id="typewriter" class="intro-text"></div>
+        <div class="signature" id="signature" style="visibility:hidden;"> I LOVE U 💗</div>
+        <button class="btn-minimal" id="startBtn" style="visibility:hidden;" onclick="showPage('cake-page')">Open My Heart</button>
+    </section>
+
+    <!-- PAGE 2: CAKE -->
+    <section id="cake-page" class="section hidden">
+        <h2 style="font-family:'Dancing Script'; color: var(--nazar-blue); font-size: 2rem; margin-bottom: 50px;">Happy Birthday, Kishore! 🧿</h2>
+        <div class="cake-container" onclick="blowCandle()">
+            <div class="cake">
+                <div class="layer l1"><div class="candle" id="candle"><div class="flame"></div></div></div>
+                <div class="layer l2"></div>
+                <div class="layer l3"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- PAGE 3: TRANSITION -->
+    <div id="blackout">
+        <div class="tiny-heart" onclick="goToMemories()"></div>
+    </div>
+
+    <!-- PAGE 4: PHOTOS -->
+    <section id="memories" class="section hidden" style="height: auto;">
+        <h2 style="font-family:'Dancing Script'; color: var(--nazar-blue); font-size: 2.2rem; margin-bottom: 30px;">Every Memory is a Treasure 🧿</h2>
+        <div class="memory-container" id="grid">
+            <div class="memory-card m1"><img src="1.jpeg"></div>
+            <div class="memory-card m2"><img src="2.jpeg"></div>
+            <div class="memory-card m3"><img src="5.jpeg"></div>
+            <div class="memory-card m4"><img src="4.jpeg"></div>
+            <div class="memory-card m5"><img src="7.jpeg"></div>
+            <div class="memory-card m6"><img src="17.jpeg"></div>
+            <div class="memory-card m7"><img src="13.jpeg"></div>
+            <div class="memory-card m8"><img src="8.jpeg"></div>
+            <div class="memory-card m9"><img src="22.jpg"></div>
+            <div class="memory-card m10"><img src="15.jpeg"></div>
+            <div class="memory-card m11"><img src="11.jpeg"></div>
+            <div class="memory-card m12"><img src="12.jpeg"></div>
+            <div class="memory-card m13"><img src="20.jpeg"></div>
+            <div class="memory-card m14"><img src="23.jpg"></div>
+            <div class="memory-card m15"><img src="21.jpg"></div>
+            <div class="memory-card m16"><img src="23.jpg"></div>
+            <div class="memory-card m17"><img src="26.jpg"></div>
+            <div class="memory-card m18"><img src="27.jpg"></div>
+        </div>
+        <button class="btn-minimal" onclick="showPage('q1')">Continue... ✨</button>
+    </section>
+
+    <!-- 5 QUESTION JOURNEY -->
+    <section id="q1" class="section hidden">
+        <div class="question-box">
+            <h2 style="font-family:'Dancing Script'; font-size: 1.8rem; color: var(--nazar-blue);">Kishore, are you prepared to handle My infinite drama forever?</h2>
+            <div class="btn-group">
+                <button class="btn-yes" onclick="showPage('q2')">YES! ❤️</button>
+                <button class="btn-yes" onclick="showPage('q2')">ABSOLUTELY YES! 🧿</button>
+            </div>
+        </div>
+    </section>
+
+    <section id="q2" class="section hidden">
+        <div class="question-box">
+            <h2 style="font-family:'Dancing Script'; font-size: 1.8rem; color: var(--nazar-blue);">Will you promise to be my constant source of peace and happiness?</h2>
+            <div class="btn-group">
+                <button class="btn-yes" onclick="showPage('q3')">I promise! 🤝</button>
+                <button class="btn-yes" onclick="showPage('q3')">Forever & Always 💍</button>
+            </div>
+        </div>
+    </section>
+
+    <section id="q3" class="section hidden">
+        <div class="question-box">
+            <h2 style="font-family:'Dancing Script'; font-size: 1.8rem; color: var(--nazar-blue);">Will you always be the 'Nazar' protection that keeps our bond safe?</h2>
+            <div class="btn-group">
+                <button class="btn-yes" onclick="showPage('q4')">Always 🧿</button>
+                <button class="btn-yes" onclick="showPage('q4')">Every single day ✨</button>
+            </div>
+        </div>
+    </section>
+
+    <section id="q4" class="section hidden">
+        <div class="question-box">
+            <h2 style="font-family:'Dancing Script'; font-size: 1.8rem; color: var(--nazar-blue);">Even when I'm annoying, will you still think I'm the cutest?</h2>
+            <div class="btn-group">
+                <button class="btn-yes" onclick="showPage('q5')">Of course! 🦋</button>
+                <button class="btn-yes" onclick="showPage('q5')">Definitely! ❤️</button>
+            </div>
+        </div>
+    </section>
+
+    <section id="q5" class="section hidden">
+        <div class="question-box">
+            <h2 style="font-family:'Dancing Script'; font-size: 1.8rem; color: var(--nazar-blue);">Are you ready for the 100 Reasons why I adore you?</h2>
+            <div class="btn-group">
+                <button class="btn-yes" onclick="showPage('reasons-section')">Show me! 💗</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- 100 REASONS SECTION -->
+    <section id="reasons-section" class="section hidden" style="height: auto;">
+        <div class="reasons-card">
+            <h2 class="reasons-header">100 Reasons why I love you? 💗</h2>
+            <div class="reasons-grid" id="reasonsGrid">
+                <!-- Content generated via JavaScript below -->
+            </div>
+            <button class="btn-minimal" style="width: 100%;" onclick="showPage('password-section')">Unlock the Final Secret 🔒</button>
+        </div>
+    </section>
+
+    <!-- PASSWORD -->
+    <section id="password-section" class="section hidden">
+        <div class="pass-container">
+            <h3 style="margin-top:0; font-size: 1rem; opacity: 0.7;">Crack the Code</h3>
+            <p style="font-size: 0.8rem; margin-bottom: 20px;">What's the secret nickname I call you? 🤫</p>
+            <input type="password" id="passIn" class="pass-input" oninput="checkPass()" placeholder="Typing...">
+        </div>
+    </section>
+
+    <!-- LETTER -->
+    <section id="letter-page" class="section hidden">
+        <div class="letter-card">
+            <h2 style="font-family:'Dancing Script'; color:var(--nazar-blue); margin-top: 0;">To my cutiee pie,</h2>
+            <p>Happy Birthday! I LOVE YOU 😘 nd sure I HATE YOU ✨. I'm sitting here trying to put into words all these feelings I've got bubbling up. It's like I've been on this crazy love journey that started the moment I met you, and there's no end in sight. Honestly, you're not just a part of my life now – you're my whole world. </p>
+            <p>Your smile? Totally the highlight of my day. And your laugh? It's like the best music to my ears. Every single moment with you is something I just want to hold onto forever. You've shown me what it's like to be truly in love, and I can't thank you enough.</p>
+            <p>It's amazing how you just get me, sometimes even before I've figured out how to say what I'm thinking. You make me feel so loved, so safe. You're like my personal inspiration, pushing me to go after my dreams just like you do with yours.</p>
+            <p>So, as I'm writing this, just know that I love you more than I could ever put into words. I'm super excited about all the stuff we will do together. You really are my everything – my love, my forever.</p>
+            <p style="font-family:'Lora'; font-style: italic; margin-top: 30px;">Always yours, <br> Sreenitha ❤️</p>
+        </div>
+    </section>
+
+    <script>
+        // Data for 100 Reasons from your image
+        const reasonsText = [
+            "Your smile.", "Your eyes.", "The way you look at me.", "The way you calm my storms.", "Your patience.", "Your kindness.", "Your voice.", "The way you say my name.", "How you care.", "How you stay.",
+            "Your honesty.", "Your silence.", "Your touch.", "Your hugs.", "The way you listen.", "How you see through me.", "Your little surprises.", "Your big heart.", "The way you believe in me.", "Your laugh.",
+            "The way you cry.", "Your soul.", "The way you fight for us.", "Your late night talks.", "The way you apologize.", "How you make things better.", "The way you forgive.", "How you understand.", "Your warmth.", "Your flaws.",
+            "The way you remember details.", "Your random texts.", "How you hold my hand.", "The way you miss me.", "Your protectiveness.", "Your dreams.", "Your fear of losing me.", "Your voice notes.", "The way you make me laugh.", "The way you look sleepy.",
+            "Your crazy ideas.", "How you comfort me.", "The way you respect me.", "The way you look in my eyes.", "Your little jealous moments.", "Your shyness.", "Your strength.", "Your soft heart.", "How you value small things.", "How you say 'I'm here'.",
+            "How you wait.", "How you explain calmly.", "The way you say 'I love you'.", "How you fight fair.", "The way you get emotional.", "The way you love music.", "Your loyalty.", "Your insecurities.", "Your growth.", "Your attention to me.",
+            "Your stubbornness.", "Your hands.", "Your heartbeats.", "How you let me be me.", "How you accept my darkness.", "The way you inspire me.", "The way you kiss.", "How you look when you're mad.", "How you fix broken things.", "How you pray.",
+            "The way you laugh at my jokes.", "The way you heal me.", "How you love me despite everything.", "Your inner child.", "Your courage.", "The way you pull me closer.", "The way you whisper.", "The way you react to compliments.", "The way you express love.", "The way you talk about your day.",
+            "The way you sit in silence with me.", "The way you get excited.", "The way you trust me.", "How you've changed me.", "The way you know what I'm not saying.", "Your sleepy voice.", "The way you say goodnight.", "The way you touch my soul.", "The way you calm my anxiety.", "The way you remind me of home.",
+            "The way you give me peace.", "The way you still choose me.", "The way you look at stars.", "The way you laugh with your eyes.", "The way you ask if I've eaten.", "The way you remember my pain.", "The way you call me yours.", "How you stay in my prayers.", "The way you love me even when I'm unlovable.", "Because you're you — and that's enough."
+        ];
+
+        // Populate Reasons
+        const grid = document.getElementById('reasonsGrid');
+        reasonsText.forEach((reason, i) => {
+            const div = document.createElement('div');
+            div.className = 'reason-item';
+            div.innerHTML = `<span>${i + 1}.</span> ${reason}`;
+            grid.appendChild(div);
+        });
+
+        // Floating Doodles
+        const dc = document.getElementById('doodleContainer');
+        for(let i=0; i<20; i++) {
+            const h = document.createElement('div'); h.className = 'heart-doodle';
+            h.style.left = Math.random() * 100 + 'vw'; h.style.top = Math.random() * 100 + 'vh';
+            h.style.backgroundColor = Math.random() > 0.5 ? '#002395' : '#ffccd5';
+            dc.appendChild(h);
+        }
+
+        // Typewriter Intro
+        const text = "To the boy who holds my whole world... Kishore. You make my life a beautiful sketch. Happy Birthday Cuteyy💗🫂🌏";
+        let idx = 0;
+        function type() {
+            if (idx < text.length) {
+                document.getElementById("typewriter").innerHTML += text.charAt(idx);
+                idx++; setTimeout(type, 100);
+            } else { 
+                document.getElementById('signature').style.visibility = 'visible';
+                document.getElementById('startBtn').style.visibility = 'visible'; 
+            }
+        }
+        window.onload = type;
+
+        function blowCandle() {
+            document.getElementById('candle').style.visibility = 'hidden';
+            confetti({ particleCount: 180, colors: ['#002395', '#89cff0', '#ffffff'] });
+            setTimeout(() => { document.getElementById('blackout').classList.add('active'); }, 1500);
+        }
+
+        function goToMemories() {
+            document.getElementById('blackout').classList.remove('active');
+            showPage('memories');
+            document.querySelectorAll('.memory-card').forEach((c, i) => {
+                setTimeout(() => c.classList.add('reveal'), i * 150);
+            });
+        }
+
+        function checkPass() {
+            if(document.getElementById('passIn').value.toLowerCase() === 'cuteyy') {
+                confetti({ particleCount: 100, spread: 70 });
+                setTimeout(() => showPage('letter-page'), 500);
+            }
+        }
+
+        function showPage(id) {
+            document.querySelectorAll('section').forEach(s => s.classList.add('hidden'));
+            document.getElementById(id).classList.remove('hidden');
+            window.scrollTo(0,0);
+        }
+    </script>
+</body>
+</html>
